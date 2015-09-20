@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('propwareide.welcome', [
-    'ngRoute'
+    'ngRoute',
+    'ui.bootstrap',
+    'pageslide-directive'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/welcome', {
@@ -15,12 +17,23 @@ angular.module('propwareide.welcome', [
 function WelcomeCtrl(File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   var vm = this;
 
+  this.nav = {
+    open: true
+  };
   this.editor = {
     mode: this.find_theme(FILE_EXTENSION_MAP, 'Sample.cpp'),
     theme: DEFAULT_THEME,
     onLoad: function (editor) {
       vm.aceLoaded(editor);
     }
+  };
+  this.project = {
+    user: 'davidz',
+    name: 'Sample',
+    fileNames: [
+      'Sample.cpp',
+      'functions.cpp'
+    ]
   };
 
   this.file = File.get({

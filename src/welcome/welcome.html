@@ -1,3 +1,22 @@
-<div class="editor" ui-ace="welcome.editor" ng-model="welcome.file.contents"></div>
+<header>
+  <h1>Hello</h1>
+</header>
 
-<p>{{welcome.code}}</p>
+<section id="main_content" class="inner">
+  <div class="editor" ui-ace="welcome.editor" ng-model="welcome.file.contents"></div>
+
+  <div pageslide ps-open="welcome.nav.open" ps-side="left" ps-squeeze="true" ps-cloak="false">
+    <accordion close-others="false">
+      <accordion-group heading="{{welcome.project.name}}">
+        <nav>
+          <ul>
+            <li ng-repeat="fileName in welcome.project.fileNames">
+              <i class="right" ng-class="{'fa fa-chevron-down': isopen, 'fa fa-chevron-right': !isopen}"></i>
+              <a>{{fileName}}</a>
+            </li>
+          </ul>
+        </nav>
+      </accordion-group>
+    </accordion>
+  </div>
+</section>

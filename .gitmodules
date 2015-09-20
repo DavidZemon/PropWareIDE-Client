@@ -1,3 +1,6 @@
 [submodule "js/ace"]
 	path = js/ace
 	url = https://github.com/ajaxorg/ace-builds.git
+[submodule "js/ng-pageslide"]
+	path = js/ng-pageslide
+	url = https://github.com/dpiccone/ng-pageslide.git

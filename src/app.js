@@ -10,5 +10,5 @@ angular.module('propwareide', [
     'propwareide.welcome'
   ])
   .config(['$routeProvider', function ($routeProvider) {
-    $routeProvider.otherwise({redirectTo: '/welcome'})
+    $routeProvider.otherwise({redirectTo: '/welcome'});
   }]);
