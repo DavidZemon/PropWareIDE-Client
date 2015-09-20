@@ -1,0 +1,31 @@
+#sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  overflow: auto;
+}
+
+#content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 210px /* 200 + 10*/;
+  right: 0;
+  overflow: hidden;
+}
+
+#sidebar-resizer {
+  background-color: #666;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 200px;
+  width: 10px;
+  cursor: e-resize;
+}
+
+#sidebar-resizer:hover, #preview-resizer:hover {
+  background-color: #AAA;
+}

@@ -1,22 +1,20 @@
-<header>
-  <h1>Hello</h1>
-</header>
+<div id="sidebar">
+  <h2>{{welcome.project.name}}</h2>
 
-<section id="main_content" class="inner">
-  <div class="editor" ui-ace="welcome.editor" ng-model="welcome.file.contents"></div>
-
-  <div pageslide ps-open="welcome.nav.open" ps-side="left" ps-squeeze="true" ps-cloak="false">
-    <accordion close-others="false">
-      <accordion-group heading="{{welcome.project.name}}">
-        <nav>
-          <ul>
-            <li ng-repeat="fileName in welcome.project.fileNames">
-              <i class="right" ng-class="{'fa fa-chevron-down': isopen, 'fa fa-chevron-right': !isopen}"></i>
-              <a>{{fileName}}</a>
-            </li>
-          </ul>
-        </nav>
-      </accordion-group>
-    </accordion>
+  <div ng-repeat="fileName in welcome.project.fileNames">
+    <a>{{fileName}}</a>
   </div>
-</section>
+</div>
+
+<div id="content">
+  <div id="editor" class="editor" ui-ace="welcome.editor" ng-model="welcome.file.contents"></div>
+</div>
+
+<div id="sidebar-resizer"
+     resizer="vertical"
+     resizer-width="10"
+     resizer-left="#sidebar"
+     resizer-right="#content"
+     resizer-min="50"
+     resizer-max="400">
+</div>

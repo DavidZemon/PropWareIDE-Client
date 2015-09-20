@@ -3,7 +3,7 @@
 angular.module('propwareide.welcome', [
     'ngRoute',
     'ui.bootstrap',
-    'pageslide-directive'
+    'mc.resizer'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/welcome', {
@@ -25,6 +25,15 @@ function WelcomeCtrl(File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
     theme: DEFAULT_THEME,
     onLoad: function (editor) {
       vm.aceLoaded(editor);
+    },
+    require: [
+      'ace/ext/language_tools'
+    ],
+    advanced: {
+      fontSize: '13pt',
+      enableSnippets: true,
+      enableBasicAutocompletion: true,
+      enableLiveAutocompletion: true
     }
   };
   this.project = {
@@ -57,7 +66,7 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
 };
 
 WelcomeCtrl.prototype.saveFile = function () {
-  this.file.save();
+  this.file.$save();
 };
 
 WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
