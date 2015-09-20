@@ -2,7 +2,6 @@
 
 angular.module('propwareide.welcome', [
     'ngRoute',
-    'satellizer',
     'angularModalService',
     'mc.resizer'
   ])
@@ -11,14 +10,6 @@ angular.module('propwareide.welcome', [
       templateUrl: 'src/welcome/welcome.html',
       controller: 'WelcomeCtrl',
       controllerAs: 'welcome'
-    });
-  }])
-  .config(['$authProvider', function ($authProvider) {
-    $authProvider.google({
-      clientId: '57771016196-026qf5kvh98gvk1rlktf38790g355u9p.apps.googleusercontent.com'
-    });
-    $authProvider.github({
-      clientId: 'bfcbfb3817bb92c6d5aa'
     });
   }])
   .controller('WelcomeCtrl', WelcomeCtrl);
@@ -95,18 +86,19 @@ WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
   return 'text';
 };
 
-WelcomeCtrl.prototype.login = function (provider) {
-  this.user = this.$auth.authenticate(provider);
-};
-
-WelcomeCtrl.prototype.logout = function () {
+WelcomeCtrl.prototype.login = function () {
+  var vm = this;
   this.ModalService.showModal({
     templateUrl: 'src/login/login.html',
     controller: 'LoginCtrl',
     controllerAs: 'login'
   }).then(function (modal) {
     modal.element.modal();
-    modal.close.then(function (result) {
+    modal.close.then(function (user) {
+      vm.user = user;
     });
   });
+};
+
+WelcomeCtrl.prototype.logout = function () {
 };
