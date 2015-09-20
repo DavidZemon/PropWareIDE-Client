@@ -18,7 +18,8 @@ angular.module('propwareide.common', [
       's'
     ]
   })
-  .constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')
+  //.constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')
+  .constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/server/jas')
   .constant('DEFAULT_THEME', 'monokai')
   .factory('File', File);
 
