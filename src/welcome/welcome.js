@@ -2,7 +2,7 @@
 
 angular.module('propwareide.welcome', [
     'ngRoute',
-    'ui.bootstrap',
+    'angularModalService',
     'mc.resizer'
   ])
   .config(['$routeProvider', function ($routeProvider) {
@@ -14,8 +14,9 @@ angular.module('propwareide.welcome', [
   }])
   .controller('WelcomeCtrl', WelcomeCtrl);
 
-function WelcomeCtrl(File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
+function WelcomeCtrl(ModalService, File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   var vm = this;
+  this.ModalService = ModalService;
 
   this.nav = {
     open: true
@@ -75,8 +76,6 @@ WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
   var extension = file.toLowerCase().split('.');
   extension = extension[extension.length - 1];
 
-  console.log(extension);
-
   for (var key in FILE_EXTENSION_MAP)
     if (FILE_EXTENSION_MAP.hasOwnProperty(key))
       if (-1 < FILE_EXTENSION_MAP[key].indexOf(extension))
@@ -86,9 +85,16 @@ WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
 };
 
 WelcomeCtrl.prototype.login = function () {
-
 };
 
 WelcomeCtrl.prototype.logout = function () {
-
+  this.ModalService.showModal({
+    templateUrl: 'src/login/login.html',
+    controller: 'LoginCtrl',
+    controllerAs: 'login'
+  }).then(function (modal) {
+    modal.element.modal();
+    modal.close.then(function (result) {
+    });
+  });
 };
