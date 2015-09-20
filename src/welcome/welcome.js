@@ -49,6 +49,8 @@ function WelcomeCtrl(File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
     user: 'davidz',
     project: 'Sample',
     file: 'Sample.cpp'
+  }, function (originalContent) {
+    vm.originalContent = originalContent;
   });
 }
 WelcomeCtrl.prototype.aceLoaded = function (editor) {
@@ -81,4 +83,12 @@ WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
         return key;
 
   return 'text';
+};
+
+WelcomeCtrl.prototype.login = function () {
+
+};
+
+WelcomeCtrl.prototype.logout = function () {
+
 };
