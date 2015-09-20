@@ -2,6 +2,7 @@
 
 angular.module('propwareide.welcome', [
     'ngRoute',
+    'satellizer',
     'angularModalService',
     'mc.resizer'
   ])
@@ -12,10 +13,19 @@ angular.module('propwareide.welcome', [
       controllerAs: 'welcome'
     });
   }])
+  .config(['$authProvider', function ($authProvider) {
+    $authProvider.google({
+      clientId: '57771016196-026qf5kvh98gvk1rlktf38790g355u9p.apps.googleusercontent.com'
+    });
+    $authProvider.github({
+      clientId: 'bfcbfb3817bb92c6d5aa'
+    });
+  }])
   .controller('WelcomeCtrl', WelcomeCtrl);
 
-function WelcomeCtrl(ModalService, File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
+function WelcomeCtrl($auth, ModalService, File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   var vm = this;
+  this.$auth = $auth;
   this.ModalService = ModalService;
 
   this.nav = {
@@ -53,6 +63,7 @@ function WelcomeCtrl(ModalService, File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   }, function (originalContent) {
     vm.originalContent = originalContent;
   });
+
 }
 WelcomeCtrl.prototype.aceLoaded = function (editor) {
   var vm = this;
@@ -84,7 +95,8 @@ WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
   return 'text';
 };
 
-WelcomeCtrl.prototype.login = function () {
+WelcomeCtrl.prototype.login = function (provider) {
+  this.user = this.$auth.authenticate(provider);
 };
 
 WelcomeCtrl.prototype.logout = function () {

@@ -1,11 +1,9 @@
 <div id="sidebar">
-  <h2>{{welcome.project.name}}
-    <br />
-    <small>
-      <a ng-click="welcome.login()" ng-hide="welcome.project.user">Login</a>
-      <a ng-click="welcome.logout()" ng-show="welcome.project.user">{{welcome.project.user}} - Logout</a>
-    </small>
-  </h2>
+  <h2>{{welcome.project.name}}</h2>
+  <button ng-click="welcome.login('google')">Sign in with Google</button>
+  <button ng-click="welcome.login('github')">Sign in with GitHub</button>
+
+  <p>{{welcome.user | json}}</p>
 
   <div ng-repeat="fileName in welcome.project.fileNames">
     <a>{{fileName}}</a>
