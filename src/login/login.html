@@ -5,18 +5,17 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Login</h4>
       </div>
-      <div class="modal-body">
-        <form id="loginForm">
+      <form id="loginForm">
+        <div class="modal-body">
           <label for="username">Username
             <input type="text" id="username" placeholder="davidz" ng-model="login.username">
           </label>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary" formtarget="loginForm" type="submit"
-                ng-click="login.login()" data-dismiss="modal">Login</button>
-      </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary" type="submit" ng-click="login.login()" data-dismiss="modal">Login</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
