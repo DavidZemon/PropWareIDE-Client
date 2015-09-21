@@ -32,6 +32,7 @@ function WelcomeCtrl($auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXT
     onLoad: function (editor) {
       vm.aceLoaded(editor);
     },
+    readOnly: true,
     require: [
       'ace/ext/language_tools'
     ],
@@ -57,6 +58,7 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
       vm.saveFile();
     }
   });
+  editor.setReadOnly(!this.currentFile);
 };
 
 WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
