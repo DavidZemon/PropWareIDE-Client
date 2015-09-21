@@ -3,7 +3,9 @@
 angular.module('propwareide.welcome', [
     'ngRoute',
     'angularModalService',
-    'mc.resizer'
+    'mc.resizer',
+    'propwareide.login',
+    'propwareide.openProject'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.when('/welcome', {
@@ -14,16 +16,18 @@ angular.module('propwareide.welcome', [
   }])
   .controller('WelcomeCtrl', WelcomeCtrl);
 
-function WelcomeCtrl($auth, ModalService, File, DEFAULT_THEME, FILE_EXTENSION_MAP) {
+function WelcomeCtrl($auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   var vm = this;
   this.$auth = $auth;
   this.ModalService = ModalService;
+  this.File = File;
+  this.Project = Project;
+  this.FILE_EXTENSION_MAP = FILE_EXTENSION_MAP;
 
   this.nav = {
     open: true
   };
   this.editor = {
-    mode: this.find_theme(FILE_EXTENSION_MAP, 'Sample.cpp'),
     theme: DEFAULT_THEME,
     onLoad: function (editor) {
       vm.aceLoaded(editor);
@@ -38,24 +42,9 @@ function WelcomeCtrl($auth, ModalService, File, DEFAULT_THEME, FILE_EXTENSION_MA
       enableLiveAutocompletion: true
     }
   };
-  this.project = {
-    user: 'davidz',
-    name: 'Sample',
-    fileNames: [
-      'Sample.cpp',
-      'functions.cpp'
-    ]
-  };
-
-  this.file = File.get({
-    user: 'davidz',
-    project: 'Sample',
-    file: 'Sample.cpp'
-  }, function (originalContent) {
-    vm.originalContent = originalContent;
-  });
-
+  this.project = {};
 }
+
 WelcomeCtrl.prototype.aceLoaded = function (editor) {
   var vm = this;
   editor.commands.addCommand({
@@ -68,10 +57,6 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
       vm.saveFile();
     }
   });
-};
-
-WelcomeCtrl.prototype.saveFile = function () {
-  this.file.$save();
 };
 
 WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
@@ -98,7 +83,42 @@ WelcomeCtrl.prototype.login = function () {
       vm.user = user;
     });
   });
+  //this.isAuthenticated = this.$auth.isAuthenticated();
 };
 
 WelcomeCtrl.prototype.logout = function () {
+};
+
+WelcomeCtrl.prototype.openProject = function () {
+  var vm = this;
+  this.ModalService
+    .showModal({
+      templateUrl: 'src/openProject/openProject.html',
+      controller: 'OpenProjectCtrl',
+      controllerAs: 'openProject',
+      inputs: {
+        user: vm.user
+      }
+    })
+    .then(function (modal) {
+      modal.element.modal();
+      modal.close.then(function (project) {
+        vm.project = vm.Project.get({
+          user: vm.user,
+          name: project
+        });
+      });
+    });
+};
+
+WelcomeCtrl.prototype.openFile = function (fileName) {
+  this.currentFile = this.project.files[fileName];
+  this.editor.theme = this.find_theme(this.FILE_EXTENSION_MAP, fileName);
+};
+
+WelcomeCtrl.prototype.saveFile = function () {
+  var vm = this;
+  this.file.$save(function () {
+    vm.originalContent = vm.file.contents;
+  });
 };

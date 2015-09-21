@@ -2,13 +2,20 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" ng-click="login.dismissModal()" data-dismiss="modal"
-                aria-hidden="true">&times;</button>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Login</h4>
       </div>
       <div class="modal-body">
-        <button ng-click="login.login('google')">Sign in with Google</button>
-        <button ng-click="login.login('github')">Sign in with GitHub</button>
+        <form id="loginForm">
+          <label for="username">Username
+            <input type="text" id="username" placeholder="davidz" ng-model="login.username">
+          </label>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button class="btn btn-primary" formtarget="loginForm" type="submit"
+                ng-click="login.login()" data-dismiss="modal">Login</button>
       </div>
     </div>
   </div>

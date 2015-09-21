@@ -16,20 +16,23 @@ angular.module('propwareide.login', [
 function LoginCtrl(close, $auth) {
   this.close = close;
   this.$auth = $auth;
+  this.username = '';
 }
 
 LoginCtrl.prototype.dismissModal = function () {
-  this.close({}, 200);
+  this.close('', 200);
 };
 
 LoginCtrl.prototype.login = function (provider) {
-  var vm = this;
-  this.$auth.authenticate(provider)
-    .then(function (response) {
-      vm.close(response, 200);
-    })
-    .catch(function (error) {
-      console.log(error);
-      vm.close({}, 200);
-    });
+  //var vm = this;
+  //this.$auth.authenticate(provider)
+  //  .then(function (response) {
+  //    console.log(response);
+  //    vm.close(response, 200);
+  //  })
+  //  .catch(function (error) {
+  //    console.log(error);
+  //    vm.close({}, 200);
+  //  });
+  this.close(this.username, 200);
 };

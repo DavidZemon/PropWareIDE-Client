@@ -21,8 +21,15 @@ angular.module('propwareide.common', [
   //.constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')
   .constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/server/jas')
   .constant('DEFAULT_THEME', 'eclipse')
-  .factory('File', File);
+  .factory('File', File)
+  .factory('Project', Project);
 
 function File($resource, SERVICE_URL) {
   return $resource(SERVICE_URL + '/file');
+}
+
+function Project($resource, SERVICE_URL) {
+  return $resource(SERVICE_URL + '/project/:name', {
+    name: '@name'
+  });
 }

@@ -1,17 +1,24 @@
 <div id="sidebar">
-  <h2>{{welcome.project.name}}</h2>
-  <a ng-click="welcome.login()">Login</a>
+  <h2 ng-show="welcome.project.name">{{welcome.project.name}}</h2>
 
-  <p>{{welcome.user | json}}</p>
+  <h2 ng-hide="welcome.project.name">PropWare IDE</h2>
 
-  <div ng-repeat="fileName in welcome.project.fileNames">
-    <a>{{fileName}}</a>
+  <div>
+    <a ng-click="welcome.login()" ng-hide="welcome.user">Login</a>
+    <a ng-click="welcome.logout()" ng-show="welcome.user">Logout ({{welcome.user}})</a>
+  </div>
+
+  <div ng-show="welcome.user">
+    <button class="btn btn-default" ng-click="welcome.openProject()">Open project</button>
+
+    <div ng-repeat="(fileName, fileContents) in welcome.project.files">
+      <a ng-click="welcome.openFile(fileName)">{{fileName}}</a>
+    </div>
   </div>
 </div>
 
 <div id="content">
-  <div id="editor" class="editor" ui-ace="welcome.editor"
-       ng-model="welcome.file.contents"></div>
+  <div id="editor" class="editor" ui-ace="welcome.editor" ng-model="welcome.currentFile"></div>
 </div>
 
 <div id="sidebar-resizer"

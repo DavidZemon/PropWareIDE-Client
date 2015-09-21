@@ -10,8 +10,7 @@ angular.module('propwareide', [
     'ui.bootstrap',
     'cfp.hotkeys',
     'propwareide.common',
-    'propwareide.welcome',
-    'propwareide.login'
+    'propwareide.welcome'
   ])
   .config(['$routeProvider', function ($routeProvider) {
     $routeProvider.otherwise({redirectTo: '/welcome'});
