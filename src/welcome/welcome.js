@@ -113,7 +113,7 @@ WelcomeCtrl.prototype.openProject = function () {
 
 WelcomeCtrl.prototype.openFile = function (fileName) {
   this.currentFile = this.project.files[fileName];
-  this.editor.theme = this.find_theme(this.FILE_EXTENSION_MAP, fileName);
+  this.editor.mode = this.find_theme(this.FILE_EXTENSION_MAP, fileName);
 };
 
 WelcomeCtrl.prototype.saveFile = function () {
