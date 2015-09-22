@@ -14,8 +14,14 @@ angular.module('propwareide.common', [
       'ecogc',
       'ecogcpp'
     ],
-    x86: [
+    assembly_x86: [
       's'
+    ],
+    markdown: [
+      'md'
+    ],
+    d: [
+      'd'
     ]
   })
   //.constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')

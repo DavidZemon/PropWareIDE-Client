@@ -5,6 +5,7 @@ angular.module('propwareide.welcome', [
     'angularModalService',
     'mc.resizer',
     'propwareide.login',
+    'propwareide.newFile',
     'propwareide.openProject'
   ])
   .config(['$routeProvider', function ($routeProvider) {
@@ -124,6 +125,7 @@ WelcomeCtrl.prototype.openProject = function () {
 };
 
 WelcomeCtrl.prototype.openFile = function (fileName) {
+  this.attemptFileClose();
   this.currentFile = {
     content: this.project.files[fileName],
     name: fileName
@@ -160,13 +162,14 @@ WelcomeCtrl.prototype.saveFile = function () {
 WelcomeCtrl.prototype.newFile = function () {
   var vm = this;
   this.ModalService.showModal({
-    templateUrl: 'src/login/login.html',
-    controller: 'LoginCtrl',
-    controllerAs: 'login'
+    templateUrl: 'src/newFile/newFile.html',
+    controller: 'NewFileCtrl',
+    controllerAs: 'newFile'
   }).then(function (modal) {
     modal.element.modal();
     modal.close.then(function (filename) {
-      vm.project.files[filename] = '';
+      if (filename)
+        vm.project.files[filename] = '';
     });
   });
 };

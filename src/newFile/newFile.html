@@ -1,0 +1,21 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">Create new file</h4>
+      </div>
+      <form id="loginForm">
+        <div class="modal-body">
+          <label for="filename">File name
+            <input type="text" id="filename" ng-model="newFile.filename" sync-focus-with="newFile.focus">
+          </label>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button class="btn btn-primary" type="submit" ng-click="newFile.create()" data-dismiss="modal">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
