@@ -13,10 +13,16 @@ angular.module('propwareide.login', [
   }])
   .controller('LoginCtrl', LoginCtrl);
 
-function LoginCtrl(close, $auth) {
+function LoginCtrl($timeout, $auth, close) {
+  var vm = this;
+
   this.close = close;
   this.$auth = $auth;
   this.username = '';
+  $timeout(function () {
+    vm.focus = true;
+  }, 500);
+
 }
 
 LoginCtrl.prototype.dismissModal = function () {

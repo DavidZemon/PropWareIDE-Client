@@ -16,8 +16,9 @@ angular.module('propwareide.welcome', [
   }])
   .controller('WelcomeCtrl', WelcomeCtrl);
 
-function WelcomeCtrl($auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXTENSION_MAP) {
+function WelcomeCtrl($rootScope, $auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   var vm = this;
+  this.$rootScope = $rootScope;
   this.$auth = $auth;
   this.ModalService = ModalService;
   this.File = File;
@@ -27,7 +28,7 @@ function WelcomeCtrl($auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXT
   this.nav = {
     open: true
   };
-  this.editor = {
+  this.editorSettings = {
     theme: DEFAULT_THEME,
     onLoad: function (editor) {
       vm.aceLoaded(editor);
@@ -44,11 +45,13 @@ function WelcomeCtrl($auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXT
     }
   };
   this.project = {};
+  this.currentFile = {};
 }
 
 WelcomeCtrl.prototype.aceLoaded = function (editor) {
   var vm = this;
-  editor.commands.addCommand({
+  this.editor = editor;
+  this.editor.commands.addCommand({
     name: 'save',
     bindKey: {
       win: 'Ctrl-S',
@@ -58,7 +61,7 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
       vm.saveFile();
     }
   });
-  editor.setReadOnly(!this.currentFile);
+  this.setEditorReadOnlyStatus();
 };
 
 WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
@@ -71,6 +74,10 @@ WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
         return key;
 
   return 'text';
+};
+
+WelcomeCtrl.prototype.setEditorReadOnlyStatus = function () {
+  this.editor.setReadOnly(!this.currentFile.name);
 };
 
 WelcomeCtrl.prototype.login = function () {
@@ -89,6 +96,9 @@ WelcomeCtrl.prototype.login = function () {
 };
 
 WelcomeCtrl.prototype.logout = function () {
+  this.attemptFileClose();
+  this.project = {};
+  this.user = '';
 };
 
 WelcomeCtrl.prototype.openProject = function () {
@@ -114,13 +124,49 @@ WelcomeCtrl.prototype.openProject = function () {
 };
 
 WelcomeCtrl.prototype.openFile = function (fileName) {
-  this.currentFile = this.project.files[fileName];
-  this.editor.mode = this.find_theme(this.FILE_EXTENSION_MAP, fileName);
+  this.currentFile = {
+    content: this.project.files[fileName],
+    name: fileName
+  };
+  this.editorSettings.mode = this.find_theme(this.FILE_EXTENSION_MAP, this.currentFile.name);
+  this.setEditorReadOnlyStatus();
+  this.$rootScope.filename = ' - ' + fileName;
+};
+
+WelcomeCtrl.prototype.attemptFileClose = function () {
+  if (this.currentFile.name) {
+    if (this.currentFile.content !== this.project.files[this.currentFile.name]) {
+      if (confirm('Are you sure you want to close ' + this.currentFile.name + '?'))
+        this._closeFile();
+    } else {
+      this._closeFile();
+    }
+  }
+};
+
+WelcomeCtrl.prototype._closeFile = function () {
+  this.currentFile = {};
+  this.setEditorReadOnlyStatus();
+  this.$rootScope.filename = '';
 };
 
 WelcomeCtrl.prototype.saveFile = function () {
   var vm = this;
-  this.file.$save(function () {
+  return this.file.$save(function () {
     vm.originalContent = vm.file.contents;
+  });
+};
+
+WelcomeCtrl.prototype.newFile = function () {
+  var vm = this;
+  this.ModalService.showModal({
+    templateUrl: 'src/login/login.html',
+    controller: 'LoginCtrl',
+    controllerAs: 'login'
+  }).then(function (modal) {
+    modal.element.modal();
+    modal.close.then(function (filename) {
+      vm.project.files[filename] = '';
+    });
   });
 };

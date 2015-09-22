@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="propwareide">
   <head>
     <meta charset="UTF-8">
-    <title>PropWare IDE</title>
+    <title>PropWare IDE {{$root.filename}}</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
@@ -26,7 +26,7 @@
       ga('require', 'linkid');
     </script>
   </head>
-  <body ng-app="propwareide">
+  <body>
     <div ng-view></div>
 
     <!-- JQuery -->

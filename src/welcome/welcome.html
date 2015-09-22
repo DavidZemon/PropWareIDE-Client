@@ -9,16 +9,30 @@
   </div>
 
   <div ng-show="welcome.user">
+    <hr>
+
     <button class="btn btn-default" ng-click="welcome.openProject()">Open project</button>
 
-    <div ng-repeat="(fileName, fileContents) in welcome.project.files">
-      <a ng-click="welcome.openFile(fileName)">{{fileName}}</a>
+    <div ng-show="welcome.project.name">
+      <hr>
+
+      <div ng-repeat="(fileName, fileContents) in welcome.project.files">
+        <a ng-click="welcome.openFile(fileName)">{{fileName}}</a><span
+        ng-show="welcome.currentFile.name === fileName"><span
+        ng-show="welcome.currentFile.content !== welcome.project.files[fileName]">*</span> -
+          <a ng-click="welcome.attemptFileClose()">Close</a>
+        </span>
+      </div>
+
+      <hr>
+
+      <button class="btn btn-default" ng-click="welcome.newFile()">New file</button>
     </div>
   </div>
 </div>
 
 <div id="content">
-  <div id="editor" class="editor" ui-ace="welcome.editor" ng-model="welcome.currentFile"></div>
+  <div id="editor" class="editor" ui-ace="welcome.editorSettings" ng-model="welcome.currentFile.content"></div>
 </div>
 
 <div id="sidebar-resizer"
