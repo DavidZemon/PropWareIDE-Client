@@ -65,7 +65,7 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
   this.setEditorReadOnlyStatus();
 };
 
-WelcomeCtrl.prototype.find_theme = function (FILE_EXTENSION_MAP, file) {
+WelcomeCtrl.prototype.findTheme = function (FILE_EXTENSION_MAP, file) {
   var extension = file.toLowerCase().split('.');
   extension = extension[extension.length - 1];
 
@@ -120,30 +120,77 @@ WelcomeCtrl.prototype.openProject = function () {
           user: vm.user,
           name: project
         });
+        vm.files = vm.File.query({
+          user: vm.user,
+          project: project
+        });
       });
     });
 };
 
-WelcomeCtrl.prototype.openFile = function (fileName) {
-  this.attemptFileClose();
-  this.currentFile = {
-    content: this.project.files[fileName],
-    name: fileName
-  };
-  this.editorSettings.mode = this.find_theme(this.FILE_EXTENSION_MAP, this.currentFile.name);
-  this.setEditorReadOnlyStatus();
-  this.$rootScope.filename = ' - ' + fileName;
+WelcomeCtrl.prototype.closeProject = function () {
+  if (this.attemptFileClose()) {
+    // TODO
+  }
+};
+
+WelcomeCtrl.prototype.openFile = function (file) {
+  if (file.name !== this.currentFile.name)
+    if (this.attemptFileClose()) {
+      this.currentFile = {
+        name: file.name,
+        content: this._getFileContentByName(file.name)
+      };
+      this.editorSettings.mode = this.findTheme(this.FILE_EXTENSION_MAP, this.currentFile.name);
+      this.setEditorReadOnlyStatus();
+      this.$rootScope.filename = ' - ' + this.currentFile.name;
+    }
+};
+
+WelcomeCtrl.prototype._getFileContentByName = function (fileName) {
+  var index;
+  this.files.some(function (file, i) {
+    if (file.name === fileName) {
+      index = i;
+      return true;
+    }
+  });
+  return this.files[index].content;
+};
+
+WelcomeCtrl.prototype._getFileIndexByName = function (fileName) {
+  var index;
+  this.files.some(function (file, i) {
+    if (file.name === fileName) {
+      index = i;
+      return true;
+    }
+  });
+  return index;
 };
 
 WelcomeCtrl.prototype.attemptFileClose = function () {
-  if (this.currentFile.name) {
-    if (this.currentFile.content !== this.project.files[this.currentFile.name]) {
-      if (confirm('Are you sure you want to close ' + this.currentFile.name + '?'))
-        this._closeFile();
-    } else {
-      this._closeFile();
-    }
-  }
+  if (this.isFileOpen())
+    if (!this.isFilePristine())
+      if (!this.hasUserConfirmedClose())
+        return false;
+  this._closeFile();
+  return true;
+};
+
+WelcomeCtrl.prototype.isFileOpen = function () {
+  return this.currentFile.name;
+};
+
+WelcomeCtrl.prototype.isFilePristine = function () {
+  if (this.currentFile.name)
+    return this.currentFile.content === this._getFileContentByName(this.currentFile.name);
+  else
+    return true;
+};
+
+WelcomeCtrl.prototype.hasUserConfirmedClose = function () {
+  return confirm('Are you sure you want to close ' + this.currentFile.name + ' without saving?');
 };
 
 WelcomeCtrl.prototype._closeFile = function () {
@@ -153,9 +200,17 @@ WelcomeCtrl.prototype._closeFile = function () {
 };
 
 WelcomeCtrl.prototype.saveFile = function () {
-  var vm = this;
-  return this.file.$save(function () {
-    vm.originalContent = vm.file.contents;
+  var index = this._getFileIndexByName(this.currentFile.name);
+  var fileToSave = this.files[index];
+  var originalContent = fileToSave.content;
+  fileToSave.content = this.currentFile.content;
+  return fileToSave.$save({
+    user: this.user,
+    project: this.project.name
+  }, function () {
+  }, function () {
+    // TODO: Present the error to the user
+    fileToSave.content = originalContent;
   });
 };
 
@@ -168,8 +223,21 @@ WelcomeCtrl.prototype.newFile = function () {
   }).then(function (modal) {
     modal.element.modal();
     modal.close.then(function (filename) {
-      if (filename)
-        vm.project.files[filename] = '';
+      if (filename) {
+        var file = new vm.File();
+        file.name = filename;
+        file.content = '';
+        file.$create({
+          user: vm.user,
+          project: vm.project.name,
+          name: filename
+        }, function () {
+          vm.files[vm.files.length] = file;
+          vm.project.fileNames.push(filename);
+        }, function () {
+          // TODO: Handle errors
+        });
+      }
     });
   });
 };

@@ -24,18 +24,32 @@ angular.module('propwareide.common', [
       'd'
     ]
   })
-  //.constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')
-  .constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/server/jas')
+  .constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')
+  //.constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/server/jas')
   .constant('DEFAULT_THEME', 'eclipse')
   .factory('File', File)
   .factory('Project', Project);
 
 function File($resource, SERVICE_URL) {
-  return $resource(SERVICE_URL + '/file');
+  return $resource(SERVICE_URL + '/file/:name', {
+    name: '@name'
+  }, {
+    'get':    {method:'GET'},
+    'save':   {method:'POST'},
+    'query':  {method:'GET', isArray:true},
+    'delete': {method:'DELETE'},
+    'create': {method:'PUT'}
+  });
 }
 
 function Project($resource, SERVICE_URL) {
   return $resource(SERVICE_URL + '/project/:name', {
     name: '@name'
+  }, {
+    'get':    {method:'GET'},
+    'save':   {method:'POST'},
+    'query':  {method:'GET', isArray:true},
+    'delete': {method:'DELETE'},
+    'create': {method:'PUT'}
   });
 }

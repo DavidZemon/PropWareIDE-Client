@@ -11,15 +11,19 @@
   <div ng-show="welcome.user">
     <hr>
 
-    <button class="btn btn-default" ng-click="welcome.openProject()">Open project</button>
+    <div class="btn-group">
+      <button class="btn btn-default" ng-click="welcome.openProject()">Open project</button>
+      <button class="btn btn-default" ng-click="welcome.closeProject()" ng-disabled="!welcome.project.name">Close
+        project</button>
+      <button class="btn btn-default" ng-click="welcome.newProject()">New project</button>
+    </div>
 
     <div ng-show="welcome.project.name">
       <hr>
 
-      <div ng-repeat="(fileName, fileContents) in welcome.project.files">
-        <a ng-click="welcome.openFile(fileName)">{{fileName}}</a><span
-        ng-show="welcome.currentFile.name === fileName"><span
-        ng-show="welcome.currentFile.content !== welcome.project.files[fileName]">*</span> -
+      <div ng-repeat="file in welcome.files">
+        <a ng-click="welcome.openFile(file)">{{file.name}}</a><span
+        ng-show="welcome.currentFile.name === file.name"><span ng-hide="welcome.isFilePristine()">*</span> -
           <a ng-click="welcome.attemptFileClose()">Close</a>
         </span>
       </div>
