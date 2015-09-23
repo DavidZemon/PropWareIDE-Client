@@ -130,7 +130,7 @@ WelcomeCtrl.prototype.openProject = function () {
 
 WelcomeCtrl.prototype.closeProject = function () {
   if (this.attemptFileClose()) {
-    // TODO
+    this.project = {};
   }
 };
 
@@ -239,5 +239,26 @@ WelcomeCtrl.prototype.newFile = function () {
         });
       }
     });
+  });
+};
+
+WelcomeCtrl.prototype.renameFile = function () {
+
+};
+
+WelcomeCtrl.prototype.deleteFile = function () {
+  var vm = this;
+  var fileIndex = this._getFileIndexByName(this.currentFile.name);
+  this.files[fileIndex].$delete({
+    user: this.user,
+    project: this.project.name
+  }, function () {
+    var projectFilesIndex = vm.project.fileNames.indexOf(vm.currentFile.name);
+    vm.project.fileNames.splice(projectFilesIndex, 1);
+
+    vm.currentFile = {};
+    vm.files.splice(fileIndex, 1);
+  }, function () {
+    // TODO: Handle error
   });
 };

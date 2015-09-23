@@ -3,24 +3,30 @@
 
   <h2 ng-hide="welcome.project.name">PropWare IDE</h2>
 
+  <!-- Login/Logout-->
   <div>
     <a ng-click="welcome.login()" ng-hide="welcome.user">Login</a>
     <a ng-click="welcome.logout()" ng-show="welcome.user">Logout ({{welcome.user}})</a>
   </div>
 
+  <!-- Project -->
   <div ng-show="welcome.user">
     <hr>
 
+    <!-- Project Management -->
     <div class="btn-group">
-      <button class="btn btn-default" ng-click="welcome.openProject()">Open project</button>
+      <button class="btn btn-default" ng-click="welcome.openProject()" ng-disabled="welcome.project.name">Open project</button>
       <button class="btn btn-default" ng-click="welcome.closeProject()" ng-disabled="!welcome.project.name">Close
-        project</button>
-      <button class="btn btn-default" ng-click="welcome.newProject()">New project</button>
+        project
+      </button>
+      <button class="btn btn-default" ng-click="welcome.newProject()" ng-disabled="welcome.project.name">New project</button>
     </div>
 
+    <!-- Files -->
     <div ng-show="welcome.project.name">
       <hr>
 
+      <!-- File list-->
       <div ng-repeat="file in welcome.files">
         <a ng-click="welcome.openFile(file)">{{file.name}}</a><span
         ng-show="welcome.currentFile.name === file.name"><span ng-hide="welcome.isFilePristine()">*</span> -
@@ -30,7 +36,16 @@
 
       <hr>
 
-      <button class="btn btn-default" ng-click="welcome.newFile()">New file</button>
+      <!-- File management-->
+      <div class="btn-group">
+        <button class="btn btn-default" ng-click="welcome.newFile()">New file</button>
+        <button class="btn btn-default" ng-click="welcome.renameFile()" ng-show="welcome.currentFile.name">
+          Rename file
+        </button>
+        <button class="btn btn-danger" ng-click="welcome.deleteFile()" ng-show="welcome.currentFile.name">
+          Delete file
+        </button>
+      </div>
     </div>
   </div>
 </div>
