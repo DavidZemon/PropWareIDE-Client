@@ -134,6 +134,38 @@ WelcomeCtrl.prototype.closeProject = function () {
   }
 };
 
+WelcomeCtrl.prototype.newProject = function () {
+  var vm = this;
+  this.ModalService.showModal({
+    templateUrl: 'src/userInput/userInput.html',
+    controller: 'UserInputCtrl',
+    controllerAs: 'userInput',
+    inputs: {
+      header: 'Create new project',
+      prompt: 'Project name',
+      placeholder: 'New_Project'
+    }
+  }).then(function (modal) {
+    modal.element.modal();
+    modal.close.then(function (projectName) {
+      if (projectName) {
+        var project = new vm.Project();
+        project.name = projectName;
+        project.files = [];
+        project.$create({
+          user: vm.user,
+          name: project.name
+        }, function () {
+          vm.project = project;
+        }, function () {
+          // TODO: Handle errors
+        });
+      }
+    });
+  });
+
+};
+
 WelcomeCtrl.prototype.openFile = function (file) {
   if (file.name !== this.currentFile.name)
     if (this.attemptFileClose()) {
@@ -237,7 +269,7 @@ WelcomeCtrl.prototype.newFile = function () {
           project: vm.project.name,
           name: filename
         }, function () {
-          vm.files[vm.files.length] = file;
+          vm.files.push(file);
           vm.project.fileNames.push(filename);
         }, function () {
           // TODO: Handle errors
