@@ -63,6 +63,16 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
       vm.saveFile();
     }
   });
+  this.editor.commands.addCommand({
+    name: 'build',
+    bindKey: {
+      win: 'Ctrl-B',
+      mac: 'Command-B'
+    },
+    exec: function () {
+      vm.build();
+    }
+  });
   this.setEditorReadOnlyStatus();
 };
 

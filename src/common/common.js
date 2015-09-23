@@ -24,8 +24,8 @@ angular.module('propwareide.common', [
       'd'
     ]
   })
-  .constant('SERVICE_URL', 'http://localhost:8080/propwareide/server/jas')
-  //.constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/server/jas')
+  //.constant('SERVICE_URL', 'http://localhost:8080/propwareide/file-server/jas')
+  .constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/file-server/jas')
   .constant('DEFAULT_THEME', 'eclipse')
   .factory('File', File)
   .factory('Project', Project)
