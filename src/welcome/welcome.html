@@ -28,7 +28,7 @@
 
       <!-- File list-->
       <div ng-repeat="file in welcome.files">
-        <a ng-click="welcome.openFile(file)">{{file.name}}</a><span
+        <a ng-click="welcome.openFile(file)">{{file.name | escapePeriod}}</a><span
         ng-show="welcome.currentFile.name === file.name"><span ng-hide="welcome.isFilePristine()">*</span> -
           <a ng-click="welcome.attemptFileClose()">Close</a>
         </span>
@@ -39,10 +39,11 @@
       <!-- File management-->
       <div class="btn-group">
         <button class="btn btn-default" ng-click="welcome.newFile()">New file</button>
-        <button class="btn btn-default" ng-click="welcome.renameFile()" ng-show="welcome.currentFile.name">
+        <button class="btn btn-default" ng-click="welcome.renameFile()"
+                ng-disabled="!welcome.currentFile.name || !welcome.isFilePristine()">
           Rename file
         </button>
-        <button class="btn btn-danger" ng-click="welcome.deleteFile()" ng-show="welcome.currentFile.name">
+        <button class="btn btn-default" ng-click="welcome.deleteFile()" ng-disabled="!welcome.currentFile.name">
           Delete file
         </button>
       </div>

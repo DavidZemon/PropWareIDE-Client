@@ -31,4 +31,9 @@ angular.module('propwareide', [
         });
       }
     };
+  })
+  .filter('escapePeriod', function () {
+    return function (input) {
+      return input.replace(/\$/g, '.');
+    };
   });

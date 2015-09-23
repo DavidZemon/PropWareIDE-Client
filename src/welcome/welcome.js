@@ -66,7 +66,7 @@ WelcomeCtrl.prototype.aceLoaded = function (editor) {
 };
 
 WelcomeCtrl.prototype.findTheme = function (FILE_EXTENSION_MAP, file) {
-  var extension = file.toLowerCase().split('.');
+  var extension = file.toLowerCase().split('$');
   extension = extension[extension.length - 1];
 
   for (var key in FILE_EXTENSION_MAP)
@@ -190,7 +190,7 @@ WelcomeCtrl.prototype.isFilePristine = function () {
 };
 
 WelcomeCtrl.prototype.hasUserConfirmedClose = function () {
-  return confirm('Are you sure you want to close ' + this.currentFile.name + ' without saving?');
+  return confirm('Are you sure you want to close ' + this.currentFile.name.replace(/\$/g, '.') + ' without saving?');
 };
 
 WelcomeCtrl.prototype._closeFile = function () {
@@ -219,7 +219,10 @@ WelcomeCtrl.prototype.newFile = function () {
   this.ModalService.showModal({
     templateUrl: 'src/newFile/newFile.html',
     controller: 'NewFileCtrl',
-    controllerAs: 'newFile'
+    controllerAs: 'newFile',
+    inputs: {
+      defaultFileName: 'Untitled.cpp'
+    }
   }).then(function (modal) {
     modal.element.modal();
     modal.close.then(function (filename) {
@@ -243,10 +246,51 @@ WelcomeCtrl.prototype.newFile = function () {
 };
 
 WelcomeCtrl.prototype.renameFile = function () {
-
+  var vm = this;
+  this.ModalService.showModal({
+    templateUrl: 'src/newFile/newFile.html',
+    controller: 'NewFileCtrl',
+    controllerAs: 'newFile',
+    inputs: {
+      defaultFileName: 'Untitled.cpp'
+    }
+  }).then(function (modal) {
+    modal.element.modal();
+    modal.close.then(function (filename) {
+      if (filename) {
+        var file = new vm.File();
+        file.name = filename;
+        file.content = '';
+        file.$create({
+          user: vm.user,
+          project: vm.project.name,
+          name: filename
+        }, function () {
+          vm.files.push(file);
+          vm.project.fileNames.push(filename);
+          file.content = vm.currentFile.content;
+          file.$save({
+            user: vm.user,
+            project: vm.project.name
+          }, function () {
+            vm.deleteFile(false);
+            vm.openFile(filename);
+          }, function () {
+            // TODO: Present the error to the user
+          });
+        }, function () {
+          // TODO: Handle errors
+        });
+      }
+    });
+  });
 };
 
-WelcomeCtrl.prototype.deleteFile = function () {
+WelcomeCtrl.prototype.deleteFile = function (shouldConfirm) {
+  if (typeof shouldConfirm === 'undefined' || shouldConfirm)
+    if (!confirm('Are you sure you want to delete ' + this.currentFile.name.replace(/\$/g, '.') + '?'))
+      return false;
+
   var vm = this;
   var fileIndex = this._getFileIndexByName(this.currentFile.name);
   this.files[fileIndex].$delete({
@@ -261,4 +305,5 @@ WelcomeCtrl.prototype.deleteFile = function () {
   }, function () {
     // TODO: Handle error
   });
+  return true;
 };
