@@ -17,6 +17,8 @@
     "alert",
     "console",
     "confirm",
+    "Blob",
+    "URL",
     "$",
     "angular",
     "describe",

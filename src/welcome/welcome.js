@@ -17,13 +17,14 @@ angular.module('propwareide.welcome', [
   }])
   .controller('WelcomeCtrl', WelcomeCtrl);
 
-function WelcomeCtrl($rootScope, $auth, ModalService, File, Project, DEFAULT_THEME, FILE_EXTENSION_MAP) {
+function WelcomeCtrl($rootScope, $auth, ModalService, File, Project, projectBuilder, DEFAULT_THEME, FILE_EXTENSION_MAP) {
   var vm = this;
   this.$rootScope = $rootScope;
   this.$auth = $auth;
   this.ModalService = ModalService;
   this.File = File;
   this.Project = Project;
+  this.projectBuilder = projectBuilder;
   this.FILE_EXTENSION_MAP = FILE_EXTENSION_MAP;
 
   this.nav = {
@@ -343,8 +344,17 @@ WelcomeCtrl.prototype.deleteFile = function (shouldConfirm) {
     if (vm.currentFile.name === fileNameToDelete)
       vm.currentFile = {};
     vm.files.splice(vm._getFileIndexByName(fileNameToDelete), 1);
+    vm.setEditorReadOnlyStatus();
   }, function () {
     // TODO: Handle error
   });
   return true;
+};
+
+WelcomeCtrl.prototype.build = function () {
+  this.projectBuilder.build(this.user, this.project.name);
+};
+
+WelcomeCtrl.prototype.clean = function () {
+  this.projectBuilder.clean(this.user, this.project.name);
 };
