@@ -3,17 +3,20 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">New file name</h4>
+        <h4 class="modal-title">{{userInput.header}}</h4>
       </div>
       <form id="loginForm">
         <div class="modal-body">
-          <label for="filename">File name
-            <input type="text" id="filename" ng-model="newFile.filename" sync-focus-with="newFile.focus">
+          <label for="filename">{{userInput.prompt}}
+            <input type="text" id="filename" ng-model="userInput.userInput" sync-focus-with="userInput.focus"
+                   placeholder="{{userInput.placeholder}}">
           </label>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button class="btn btn-primary" type="submit" ng-click="newFile.create()" data-dismiss="modal">Create</button>
+          <button class="btn btn-primary" type="submit" ng-click="userInput.submit()" data-dismiss="modal">
+            Submit
+          </button>
         </div>
       </form>
     </div>

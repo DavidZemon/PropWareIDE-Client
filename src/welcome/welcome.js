@@ -5,7 +5,7 @@ angular.module('propwareide.welcome', [
     'angularModalService',
     'mc.resizer',
     'propwareide.login',
-    'propwareide.newFile',
+    'propwareide.userInput',
     'propwareide.openProject'
   ])
   .config(['$routeProvider', function ($routeProvider) {
@@ -139,16 +139,16 @@ WelcomeCtrl.prototype.openFile = function (file) {
     if (this.attemptFileClose()) {
       this.currentFile = {
         name: file.name,
-        content: this._getFileContentByName(file.name)
+        content: file.content
       };
       this.editorSettings.mode = this.findTheme(this.FILE_EXTENSION_MAP, this.currentFile.name);
       this.setEditorReadOnlyStatus();
-      this.$rootScope.filename = ' - ' + this.currentFile.name;
+      this.$rootScope.filename = ' - ' + this.currentFile.name.replace(/\$/g, '.');
     }
 };
 
 WelcomeCtrl.prototype._getFileContentByName = function (fileName) {
-  var index;
+  var index = -1;
   this.files.some(function (file, i) {
     if (file.name === fileName) {
       index = i;
@@ -217,11 +217,13 @@ WelcomeCtrl.prototype.saveFile = function () {
 WelcomeCtrl.prototype.newFile = function () {
   var vm = this;
   this.ModalService.showModal({
-    templateUrl: 'src/newFile/newFile.html',
-    controller: 'NewFileCtrl',
-    controllerAs: 'newFile',
+    templateUrl: 'src/userInput/userInput.html',
+    controller: 'UserInputCtrl',
+    controllerAs: 'userInput',
     inputs: {
-      defaultFileName: 'Untitled.cpp'
+      header: 'Create new file',
+      prompt: 'File name',
+      placeholder: 'Untitled.cpp'
     }
   }).then(function (modal) {
     modal.element.modal();
@@ -248,11 +250,13 @@ WelcomeCtrl.prototype.newFile = function () {
 WelcomeCtrl.prototype.renameFile = function () {
   var vm = this;
   this.ModalService.showModal({
-    templateUrl: 'src/newFile/newFile.html',
-    controller: 'NewFileCtrl',
-    controllerAs: 'newFile',
+    templateUrl: 'src/userInput/userInput.html',
+    controller: 'UserInputCtrl',
+    controllerAs: 'userInput',
     inputs: {
-      defaultFileName: 'Untitled.cpp'
+      header: 'Rename file',
+      prompt: 'File name',
+      placeholder: 'NewFileName.cpp'
     }
   }).then(function (modal) {
     modal.element.modal();
@@ -274,7 +278,7 @@ WelcomeCtrl.prototype.renameFile = function () {
             project: vm.project.name
           }, function () {
             vm.deleteFile(false);
-            vm.openFile(filename);
+            vm.openFile(file);
           }, function () {
             // TODO: Present the error to the user
           });
@@ -287,21 +291,26 @@ WelcomeCtrl.prototype.renameFile = function () {
 };
 
 WelcomeCtrl.prototype.deleteFile = function (shouldConfirm) {
+  var fileNameToDelete = this.currentFile.name;
+
   if (typeof shouldConfirm === 'undefined' || shouldConfirm)
-    if (!confirm('Are you sure you want to delete ' + this.currentFile.name.replace(/\$/g, '.') + '?'))
+    if (!confirm('Are you sure you want to delete ' + fileNameToDelete.replace(/\$/g, '.') + '?'))
       return false;
 
   var vm = this;
-  var fileIndex = this._getFileIndexByName(this.currentFile.name);
-  this.files[fileIndex].$delete({
+  var fileToDelete = this.files[this._getFileIndexByName(fileNameToDelete)];
+  fileToDelete.$delete({
     user: this.user,
     project: this.project.name
   }, function () {
-    var projectFilesIndex = vm.project.fileNames.indexOf(vm.currentFile.name);
+    var projectFilesIndex = vm.project.fileNames.indexOf(fileNameToDelete);
     vm.project.fileNames.splice(projectFilesIndex, 1);
 
-    vm.currentFile = {};
-    vm.files.splice(fileIndex, 1);
+    // Since this call is async, it's possible that another file was already opened. If that's the case, don't close
+    // the current file
+    if (vm.currentFile.name === fileNameToDelete)
+      vm.currentFile = {};
+    vm.files.splice(vm._getFileIndexByName(fileNameToDelete), 1);
   }, function () {
     // TODO: Handle error
   });
