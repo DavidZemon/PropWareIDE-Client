@@ -19,6 +19,7 @@
     "confirm",
     "Blob",
     "URL",
+    "atob",
     "$",
     "angular",
     "describe",

@@ -48,6 +48,10 @@ function WelcomeCtrl($rootScope, $auth, ModalService, File, Project, projectBuil
   };
   this.project = {};
   this.currentFile = {};
+  this.cmakeOptions = {
+    MODEL: 'lmm'
+  };
+  this.makeOptions = {};
 }
 
 WelcomeCtrl.prototype.aceLoaded = function (editor) {
@@ -362,9 +366,5 @@ WelcomeCtrl.prototype.deleteFile = function (shouldConfirm) {
 };
 
 WelcomeCtrl.prototype.build = function () {
-  this.projectBuilder.build(this.user, this.project.name);
-};
-
-WelcomeCtrl.prototype.clean = function () {
-  this.projectBuilder.clean(this.user, this.project.name);
+  this.projectBuilder.build(this.user, this.project.name, this.cmakeOptions, this.makeOptions);
 };

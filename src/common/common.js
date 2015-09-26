@@ -24,8 +24,8 @@ angular.module('propwareide.common', [
       'd'
     ]
   })
-  //.constant('SERVICE_URL', 'http://localhost:8080/propwareide/file-server/jas')
-  .constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/file-server/jas')
+  .constant('SERVICE_URL', 'http://localhost:8080/propwareide/file-server/jas')
+  //.constant('SERVICE_URL', 'http://david.zemon.name:8080/propwareide/file-server/jas')
   .constant('DEFAULT_THEME', 'eclipse')
   .factory('File', File)
   .factory('Project', Project)
@@ -60,30 +60,58 @@ function ProjectBuilder($http, SERVICE_URL) {
   this.SERVICE_URL = SERVICE_URL;
 }
 
-ProjectBuilder.prototype.build = function (user, project) {
-  return this._build(user, project, 'all');
+ProjectBuilder.prototype.build = function (user, project, cmakeOptions, makeOptions) {
+  return this._build(user, project, cmakeOptions, makeOptions, ['all']);
 };
 
-ProjectBuilder.prototype.clean = function (user, project) {
-  return this._build(user, project, 'clean');
-};
-
-ProjectBuilder.prototype._build = function (user, project, target) {
+ProjectBuilder.prototype._build = function (user, project, cmakeOptions, makeOptions, targets) {
+  var _this = this;
   this.$http({
     url: [this.SERVICE_URL, 'build', user, project].join('/'),
-    params: {
-      target: target
-    },
     method: 'POST',
+    data: {
+      cmakeOptions: !!cmakeOptions ? cmakeOptions : {},
+      makeOptions: !!makeOptions ? makeOptions : {},
+      targets: targets
+    },
     headers: {
       'Content-type': 'application/json'
-    },
-    responseType: 'arraybuffer'
-  }).success(function (data) {
-    var blob = new Blob([data], {type: 'application/octet-stream'});
-    var objectUrl = URL.createObjectURL(blob);
-    window.open(objectUrl);
+    }
+  }).success(function (buildResponse) {
+    console.log(buildResponse.cmakeResult.output);
+    console.log(buildResponse.makeResult.output);
+
+    if (buildResponse.binary) {
+      var blob = _this.b64toBlob(buildResponse.binary);
+      var elfUrl = URL.createObjectURL(blob);
+      var anchor = document.createElement('a');
+      anchor.download = project + '.elf';
+      anchor.href = elfUrl;
+      anchor.click();
+    }
   }).error(function () {
     // TODO: Handle errors
   });
+};
+
+ProjectBuilder.prototype.b64toBlob = function (b64Data) {
+  var sliceSize = 512;
+
+  var byteCharacters = atob(b64Data);
+  var byteArrays = [];
+
+  for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    var byteNumbers = new Array(slice.length);
+    for (var i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    var byteArray = new Uint8Array(byteNumbers);
+
+    byteArrays.push(byteArray);
+  }
+
+  return new Blob(byteArrays, {type: 'application/octet-stream'});
 };

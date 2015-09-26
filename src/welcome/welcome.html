@@ -50,6 +50,20 @@
 
       <hr>
 
+      <!-- Build Options -->
+      <div class="btn-group" dropdown keyboard-nav>
+        <button id="simple-btn-keyboard-nav" type="button" class="btn btn-default" dropdown-toggle>
+          Model: {{welcome.cmakeOptions.MODEL}} <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="simple-btn-keyboard-nav">
+          <li role="menuitem" ng-repeat="model in ['cog', 'cmm', 'lmm', 'xmmc', 'xmm-split', 'xmm-single']">
+            <a ng-click="welcome.cmakeOptions.MODEL = model">{{model}}</a>
+          </li>
+        </ul>
+      </div>
+
+      <hr>
+
       <!-- Build -->
       <div class="btn-group">
         <button class="btn btn-primary" ng-click="welcome.build()" type="submit">Build</button>
