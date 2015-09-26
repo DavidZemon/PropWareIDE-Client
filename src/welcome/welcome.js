@@ -174,9 +174,9 @@ WelcomeCtrl.prototype.newProject = function () {
           name: project.name
         }, function () {
           vm.project = project;
-          vm.files = this.File.query({
-            user: this.user.toLowerCase(),
-            project: project
+          vm.files = vm.File.query({
+            user: vm.user.toLowerCase(),
+            project: project.name
           });
         }, function () {
           // TODO: Handle errors
@@ -291,7 +291,7 @@ WelcomeCtrl.prototype.newFile = function () {
           name: filename
         }, function () {
           vm.files.push(file);
-          vm.project.fileNames.push(filename);
+          vm.project.files.push(filename);
         }, function () {
           // TODO: Handle errors
         });
