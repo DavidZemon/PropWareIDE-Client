@@ -9,6 +9,8 @@ angular.module('propwareide.common', [
       'cc',
       'cpp',
       'cxx',
+      'h',
+      'hpp',
       'cogc',
       'cogcpp',
       'ecogc',

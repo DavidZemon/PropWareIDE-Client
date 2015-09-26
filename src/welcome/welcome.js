@@ -138,8 +138,6 @@ WelcomeCtrl.prototype.openProject = function () {
         vm.files = vm.File.query({
           user: vm.user.toLowerCase(),
           project: project
-        }, function (files) {
-          console.log(files);
         });
       });
     });
@@ -291,7 +289,7 @@ WelcomeCtrl.prototype.newFile = function () {
           name: filename
         }, function () {
           vm.files.push(file);
-          vm.project.files.push(filename);
+          vm.project.fileNames.push(filename);
         }, function () {
           // TODO: Handle errors
         });
