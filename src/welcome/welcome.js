@@ -136,7 +136,7 @@ WelcomeCtrl.prototype.openProject = function () {
           name: project
         });
         vm.files = vm.File.query({
-          user: this.user.toLowerCase(),
+          user: vm.user.toLowerCase(),
           project: project
         }, function (files) {
           console.log(files);
@@ -168,7 +168,7 @@ WelcomeCtrl.prototype.newProject = function () {
       if (projectName) {
         var project = new vm.Project();
         project.name = projectName;
-        project.files = [];
+        project.fileNames = [];
         project.$create({
           user: vm.user.toLowerCase(),
           name: project.name
