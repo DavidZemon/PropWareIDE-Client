@@ -125,19 +125,21 @@ WelcomeCtrl.prototype.openProject = function () {
       controller: 'OpenProjectCtrl',
       controllerAs: 'openProject',
       inputs: {
-        user: vm.user
+        user: vm.user.toLowerCase()
       }
     })
     .then(function (modal) {
       modal.element.modal();
       modal.close.then(function (project) {
         vm.project = vm.Project.get({
-          user: vm.user,
+          user: vm.user.toLowerCase(),
           name: project
         });
         vm.files = vm.File.query({
-          user: vm.user,
+          user: this.user.toLowerCase(),
           project: project
+        }, function (files) {
+          console.log(files);
         });
       });
     });
@@ -168,10 +170,14 @@ WelcomeCtrl.prototype.newProject = function () {
         project.name = projectName;
         project.files = [];
         project.$create({
-          user: vm.user,
+          user: vm.user.toLowerCase(),
           name: project.name
         }, function () {
           vm.project = project;
+          vm.files = this.File.query({
+            user: this.user.toLowerCase(),
+            project: project
+          });
         }, function () {
           // TODO: Handle errors
         });
@@ -252,7 +258,7 @@ WelcomeCtrl.prototype.saveFile = function () {
   var originalContent = fileToSave.content;
   fileToSave.content = this.currentFile.content;
   return fileToSave.$save({
-    user: this.user,
+    user: this.user.toLowerCase(),
     project: this.project.name
   }, function () {
   }, function () {
@@ -280,7 +286,7 @@ WelcomeCtrl.prototype.newFile = function () {
         file.name = filename;
         file.content = '';
         file.$create({
-          user: vm.user,
+          user: vm.user.toLowerCase(),
           project: vm.project.name,
           name: filename
         }, function () {
@@ -313,7 +319,7 @@ WelcomeCtrl.prototype.renameFile = function () {
         file.name = filename;
         file.content = '';
         file.$create({
-          user: vm.user,
+          user: vm.user.toLowerCase(),
           project: vm.project.name,
           name: filename
         }, function () {
@@ -321,7 +327,7 @@ WelcomeCtrl.prototype.renameFile = function () {
           vm.project.fileNames.push(filename);
           file.content = vm.currentFile.content;
           file.$save({
-            user: vm.user,
+            user: vm.user.toLowerCase(),
             project: vm.project.name
           }, function () {
             vm.deleteFile(false);
@@ -347,7 +353,7 @@ WelcomeCtrl.prototype.deleteFile = function (shouldConfirm) {
   var vm = this;
   var fileToDelete = this.files[this._getFileIndexByName(fileNameToDelete)];
   fileToDelete.$delete({
-    user: this.user,
+    user: this.user.toLowerCase(),
     project: this.project.name
   }, function () {
     var projectFilesIndex = vm.project.fileNames.indexOf(fileNameToDelete);
@@ -366,5 +372,5 @@ WelcomeCtrl.prototype.deleteFile = function (shouldConfirm) {
 };
 
 WelcomeCtrl.prototype.build = function () {
-  this.projectBuilder.build(this.user, this.project.name, this.cmakeOptions, this.makeOptions);
+  this.projectBuilder.build(this.user.toLowerCase(), this.project.name, this.cmakeOptions, this.makeOptions);
 };
